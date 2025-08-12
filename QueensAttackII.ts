@@ -116,6 +116,50 @@ function queensAttack(n: number, k: number, r_q: number, c_q: number, obstacles:
     return count
 }
 
+function queensAttack_optimized(n: number, k: number, r_q: number, c_q: number, obstacles: number[][]): number {
+    // 8 directions: N, NE, E, SE, S, SW, W, NW
+    const directions = [
+        [-1, 0],  // North (up)
+        [-1, 1],  // Northeast
+        [0, 1],   // East (right)
+        [1, 1],   // Southeast
+        [1, 0],   // South (down)
+        [1, -1],  // Southwest
+        [0, -1],  // West (left)
+        [-1, -1]  // Northwest
+    ];
+    
+    // Create a set of obstacles for O(1) lookup
+    const obstacleSet = new Set<string>();
+    for (const [r, c] of obstacles) {
+        obstacleSet.add(`${r},${c}`);
+    }
+    
+    let totalAttacks = 0;
+    
+    // For each direction, count how many squares the queen can attack
+    for (const [dr, dc] of directions) {
+        let steps = 0;
+        let currentRow = r_q + dr;
+        let currentCol = c_q + dc;
+        
+        // Keep moving in this direction until we hit a boundary or obstacle
+        while (
+            currentRow >= 1 && currentRow <= n &&  // Within board vertically
+            currentCol >= 1 && currentCol <= n &&  // Within board horizontally
+            !obstacleSet.has(`${currentRow},${currentCol}`)  // No obstacle
+        ) {
+            steps++;
+            currentRow += dr;
+            currentCol += dc;
+        }
+        
+        totalAttacks += steps;
+    }
+    
+    return totalAttacks;
+}
+
 function convertIndex(r: number, c: number, size: number): [number, number] {
     return [size-r, c-1]
 }
@@ -145,7 +189,7 @@ function main() {
         obstacles[i] = readLine().replace(/\s+$/g, '').split(' ').map(obstaclesTemp => parseInt(obstaclesTemp, 10));
     }
 
-    const result: number = queensAttack(n, k, r_q, c_q, obstacles);
+    const result: number = queensAttack_optimized(n, k, r_q, c_q, obstacles);
 
     ws.write(result + '\n');
 

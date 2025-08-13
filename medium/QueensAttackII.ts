@@ -119,14 +119,14 @@ function queensAttack(n: number, k: number, r_q: number, c_q: number, obstacles:
 function queensAttack_optimized(n: number, k: number, r_q: number, c_q: number, obstacles: number[][]): number {
     // 8 directions: N, NE, E, SE, S, SW, W, NW
     const directions = [
-        [-1, 0],  // North (up)
-        [-1, 1],  // Northeast
-        [0, 1],   // East (right)
-        [1, 1],   // Southeast
-        [1, 0],   // South (down)
-        [1, -1],  // Southwest
-        [0, -1],  // West (left)
-        [-1, -1]  // Northwest
+        [0,1],
+        [0,-1],
+        [1,0],
+        [-1,0],
+        [1,1],
+        [-1,-1],
+        [-1,1],
+        [1,-1],
     ];
     
     // Create a set of obstacles for O(1) lookup
@@ -135,29 +135,27 @@ function queensAttack_optimized(n: number, k: number, r_q: number, c_q: number, 
         obstacleSet.add(`${r},${c}`);
     }
     
-    let totalAttacks = 0;
+    let totalMoves = 0;
     
     // For each direction, count how many squares the queen can attack
     for (const [dr, dc] of directions) {
-        let steps = 0;
-        let currentRow = r_q + dr;
-        let currentCol = c_q + dc;
+        let r = r_q + dr
+        let c = c_q + dc
         
         // Keep moving in this direction until we hit a boundary or obstacle
         while (
-            currentRow >= 1 && currentRow <= n &&  // Within board vertically
-            currentCol >= 1 && currentCol <= n &&  // Within board horizontally
-            !obstacleSet.has(`${currentRow},${currentCol}`)  // No obstacle
+            r >= 1 && r <= n &&  // Within board vertically
+            c >= 1 && c <= n &&  // Within board horizontally
+            !obstacleSet.has(`${r},${c}`)  // No obstacle
         ) {
-            steps++;
-            currentRow += dr;
-            currentCol += dc;
+            r += dr
+            c += dc
+            totalMoves++
         }
         
-        totalAttacks += steps;
     }
     
-    return totalAttacks;
+    return totalMoves;
 }
 
 function convertIndex(r: number, c: number, size: number): [number, number] {

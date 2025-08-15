@@ -48,11 +48,10 @@ function encryption(s: string): string {
     
     let result = ''
     for (let j = 0; j < numOfColumns; j++) {
-        let word = ''
         for (let i = 0; i < numOfRows; i++) {
-            word = word.concat(matrix[i][j] ? matrix[i][j] : '')
+            result += matrix[i][j] ? matrix[i][j] : ''
         }
-        result = result.concat(word + ' ')
+        result += ' '
     }
     
     return result.substring(0, result.length - 1)

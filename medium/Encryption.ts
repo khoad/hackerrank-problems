@@ -49,7 +49,7 @@ function encryption(s: string): string {
     let result = ''
     for (let j = 0; j < numOfColumns; j++) {
         for (let i = 0; i < numOfRows; i++) {
-            result += matrix[i][j] ? matrix[i][j] : ''
+            result += matrix[i][j] ?? ''
         }
         result += ' '
     }

@@ -41,8 +41,12 @@ function beautifulTriplets(d: number, arr: number[]): number {
                 for (let k = j + 1; k < arr.length; k++) {
                     if (arr[k] - arr[j] === d) {
                         count++
+                    } else if (arr[k] - arr[j] > d) { // optimization
+                        break
                     }
                 }
+            } else if (arr[j] - arr[i] > d) { // optimization
+                break
             }
         }
     }

@@ -33,23 +33,39 @@ function readLine(): string {
  */
 
 function palindromeIndex(s: string): number {
+    // console.log(s)
     // Write your code here
-    if (isPalindrome(s)) {
+    if (isPalindrome(s, -1)) {
         return -1
     }
     for (let i = 0; i < s.length; i++) {
-        let charArr = s.split("")
-        charArr.splice(i, 1)
-        let subString = charArr.join("")
-        if (isPalindrome(subString)) {
+        if (isPalindrome(s, i)) {
+            if (i + 1 < s.length && s[i] == s[i + 1]) {
+                return i + 1
+            }
             return i
         }
     }
     return -1
 }
 
-function isPalindrome(s: string): boolean {
-    return s == s.split("").reverse().join("")
+function isPalindrome(s: string, i: number): boolean {
+    let start = 0
+    let end = s.length - 1
+    while (start <= end) {
+        if (start == i) {
+            start++
+        }
+        if (end == i) {
+            end--
+        }
+        if (s[start] != s[end]) {
+            return false
+        }
+        start++
+        end--
+    }
+    return true
 }
 
 function main() {

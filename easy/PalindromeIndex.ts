@@ -33,39 +33,48 @@ function readLine(): string {
  */
 
 function palindromeIndex(s: string): number {
-    // console.log(s)
-    // Write your code here
-    if (isPalindrome(s, -1)) {
-        return -1
+    // If already a palindrome, return -1
+    if (isPalindrome(s)) {
+        return -1;
     }
-    for (let i = 0; i < s.length; i++) {
-        if (isPalindrome(s, i)) {
-            if (i + 1 < s.length && s[i] == s[i + 1]) {
-                return i + 1
-            }
-            return i
+
+    let left = 0;
+    let right = s.length - 1;
+
+    // Find the first mismatch from both ends
+    while (left < right && s[left] === s[right]) {
+        left++;
+        right--;
+    }
+
+    // If we found a mismatch, test removing each character
+    if (left < right) {
+        // Test removing the left character
+        if (isPalindrome(s.substring(0, left) + s.substring(left + 1))) {
+            return left;
+        }
+        // Test removing the right character
+        if (isPalindrome(s.substring(0, right) + s.substring(right + 1))) {
+            return right;
         }
     }
-    return -1
+
+    return -1;
 }
 
-function isPalindrome(s: string, i: number): boolean {
-    let start = 0
-    let end = s.length - 1
-    while (start <= end) {
-        if (start == i) {
-            start++
+function isPalindrome(s: string): boolean {
+    let left = 0;
+    let right = s.length - 1;
+
+    while (left < right) {
+        if (s[left] !== s[right]) {
+            return false;
         }
-        if (end == i) {
-            end--
-        }
-        if (s[start] != s[end]) {
-            return false
-        }
-        start++
-        end--
+        left++;
+        right--;
     }
-    return true
+
+    return true;
 }
 
 function main() {

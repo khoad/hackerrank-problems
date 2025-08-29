@@ -20,8 +20,7 @@ class Result {
      * The function is expected to return an INTEGER.
      * The function accepts 2D_INTEGER_ARRAY petrolpumps as parameter.
      */
-
-    public static int truckTour(List<List<Integer>> petrolpumps) {
+    public static int truckTourInefficient(List<List<Integer>> petrolpumps) {
         // Write your code here
         for (int i = 0; i < petrolpumps.size(); i++) {
             int j = i;
@@ -39,6 +38,38 @@ class Result {
             }
         }
         return 0;
+    }
+
+    public static int truckTour(List<List<Integer>> petrolpumps) {
+        // Write your code here
+        int n = petrolpumps.size();
+        int totalPetrol = 0;
+        int totalDistance = 0;
+        int start = 0;
+        int currentPetrol = 0;
+
+        for (int i = 0; i < n; i++) {
+            int petrol = petrolpumps.get(i).get(0);
+            int distance = petrolpumps.get(i).get(1);
+
+            totalPetrol += petrol;
+            totalDistance += distance;
+            currentPetrol += petrol - distance;
+
+            // If we can't reach the next station from current position
+            if (currentPetrol < 0) {
+                // Reset starting point to next station
+                start = i + 1;
+                currentPetrol = 0;
+            }
+        }
+
+        // If total petrol is less than total distance, no solution exists
+        if (totalPetrol < totalDistance) {
+            return -1;
+        }
+
+        return start;
     }
 
 }

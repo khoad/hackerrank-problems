@@ -63,7 +63,7 @@ public class Solution {
      * }
      *
      */
-    static SinglyLinkedListNode mergeLists(SinglyLinkedListNode head1, SinglyLinkedListNode head2) {
+    static SinglyLinkedListNode mergeListsInefficient(SinglyLinkedListNode head1, SinglyLinkedListNode head2) {
         SinglyLinkedList result = new SinglyLinkedList();
         SinglyLinkedListNode curr1 = head1;
         SinglyLinkedListNode curr2 = head2;
@@ -90,6 +90,32 @@ public class Solution {
             }
         }
         return result.head;
+    }
+
+    static SinglyLinkedListNode mergeLists(SinglyLinkedListNode head1, SinglyLinkedListNode head2) {
+        SinglyLinkedListNode result = new SinglyLinkedListNode(0);
+        // Keep a reference to the dummy result head node
+        SinglyLinkedListNode dummyHead = result;
+        SinglyLinkedListNode curr1 = head1;
+        SinglyLinkedListNode curr2 = head2;
+        while (curr1 != null && curr2 != null) {
+            if (curr1.data <= curr2.data) {
+                result.next = curr1;
+                curr1 = curr1.next;
+            } else {
+                result.next = curr2;
+                curr2 = curr2.next;
+            }
+            result = result.next;
+        }
+        // Attach remaining nodes from either list
+        if (curr1 != null) {
+            result.next = curr1;
+        }
+        if (curr2 != null) {
+            result.next = curr2;
+        }
+        return dummyHead.next;
     }
 
     private static final Scanner scanner = new Scanner(System.in);

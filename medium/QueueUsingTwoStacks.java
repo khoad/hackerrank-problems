@@ -15,27 +15,36 @@ class Result {
 
     public static void queueUsingTwoStacks(List<List<Integer>> queries) {
         // Write your code here
-        var a = new Stack<Integer>();
-        var b = new Stack<Integer>();
-        for (var query: queries) {
-            if (query.get(0) == 1) {
-                // Enqueue
-                while (!b.isEmpty()) {
-                    a.push(b.pop());
+        Stack<Integer> enqueueStack = new Stack<>();
+        Stack<Integer> dequeueStack = new Stack<>();
+
+        // When dequeueStack is not empty, it already has all the elements from
+        //   enqueueStack earlier, in the correct order. So we can just push to
+        //   enqueueStack, and keep popping dequeueStack until it's empty,
+        //   then we can move elements from enqueueStack to dequeueStack.
+
+        for (List<Integer> query : queries) {
+            int type = query.get(0);
+
+            if (type == 1) {
+                // Enqueue - just push to enqueue stack
+                enqueueStack.push(query.get(1));
+            } else if (type == 2) {
+                // Dequeue - move elements only when dequeue stack is empty
+                if (dequeueStack.isEmpty()) {
+                    while (!enqueueStack.isEmpty()) {
+                        dequeueStack.push(enqueueStack.pop());
+                    }
                 }
-                a.push(query.get(1));
-            } else if (query.get(0) == 2) {
-                // Dequeue
-                while (!a.isEmpty()) {
-                    b.push(a.pop());
-                }
-                b.pop();
+                dequeueStack.pop();
             } else {
-                // Print front
-                while (!a.isEmpty()) {
-                    b.push(a.pop());
+                // Print front - move elements only when dequeue stack is empty
+                if (dequeueStack.isEmpty()) {
+                    while (!enqueueStack.isEmpty()) {
+                        dequeueStack.push(enqueueStack.pop());
+                    }
                 }
-                System.out.println(b.peek());
+                System.out.println(dequeueStack.peek());
             }
         }
     }

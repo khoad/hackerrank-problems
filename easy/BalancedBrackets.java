@@ -30,10 +30,8 @@ class Result {
         for (var c: s.toCharArray()) {
             if (map.containsValue(c)) {
                 stack.push(c);
-            } else if (map.containsKey(c)) {
-                if (stack.isEmpty() || stack.pop() != map.get(c)) {
-                    return "NO";
-                }
+            } else if (stack.isEmpty() || stack.pop() != map.get(c)) {
+                return "NO";
             }
         }
         return stack.isEmpty() ? "YES" : "NO";

@@ -21,7 +21,8 @@ class Result {
 
     public static String isBalanced(String s) {
         // Write your code here
-        var stack = new Stack<Character>();
+        // var stack = new Stack<Character>(); // thread-safe but slower
+        var stack = new ArrayDeque<Character>(); // faster but not thread-safe
         var map = Map.of(
             '}', '{',
             ']', '[',

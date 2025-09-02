@@ -47,48 +47,39 @@ class Result {
         for (int sec = 2; sec <= n; sec++) {
             plant = !plant;
 
-            if (plant) {
-                // Plant bombs in all cells without bombs
-                for (int i = 0; i < numOfRows; i++) {
-                    for (int j = 0; j < numOfColumns; j++) {
-                        if (matrix[i][j] == -1) {
-                            matrix[i][j] = 4;
-                        }
-                    }
-                }
-            }
-
-            // Decrease the time for bombs
             for (int i = 0; i < numOfRows; i++) {
                 for (int j = 0; j < numOfColumns; j++) {
+                    if (plant && matrix[i][j] == -1) {
+                        if (matrix[i][j] == -1) {
+                            matrix[i][j] = 4; // Add 1 extra second for count down
+                        }
+                    }
+
+                    // Decrease the time for bombs
                     if (matrix[i][j] > 0) {
                         matrix[i][j]--;
                     }
-                }
-            }
 
-            for (int i = 0; i < numOfRows; i++) {
-                for (int j = 0; j < numOfColumns; j++) {
                     if (matrix[i][j] == 0) {
                         // System.out.println(getKey(i, j) + " is exploding");
                         matrix[i][j]--; // will become -1, aka a '.'
 
-                        if (i + 1 < numOfRows && matrix[i + 1][j] > 0) {
+                        if (i + 1 < numOfRows && matrix[i + 1][j] > 1) {
                             // System.out.println(getKey(i + 1, j) + " (S) becomes .");
                             matrix[i + 1][j] = -1; // becomes a '.', no explosion
                         }
 
-                        if (i - 1 >= 0 && matrix[i - 1][j] > 0) {
+                        if (i - 1 >= 0 && matrix[i - 1][j] > 1) {
                             // System.out.println(getKey(i - 1, j) + " (N) becomes .");
                             matrix[i - 1][j] = -1;
                         }
 
-                        if (j + 1 < numOfColumns && matrix[i][j + 1] > 0) {
+                        if (j + 1 < numOfColumns && matrix[i][j + 1] > 1) {
                             // System.out.println(getKey(i, j + 1) + " (E) becomes .");
                             matrix[i][j + 1] = -1;
                         }
 
-                        if (j - 1 >= 0 && matrix[i][j - 1] > 0) {
+                        if (j - 1 >= 0 && matrix[i][j - 1] > 1) {
                             // System.out.println(getKey(i, j - 1) + " (W) becomes .");
                             matrix[i][j - 1] = -1;
                         }

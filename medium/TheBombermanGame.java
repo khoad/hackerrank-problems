@@ -55,14 +55,9 @@ class Result {
                         }
                     }
 
-                    // Decrease the time for bombs
-                    if (matrix[i][j] > 0) {
-                        matrix[i][j]--;
-                    }
-
-                    if (matrix[i][j] == 0) {
+                    if (matrix[i][j] == 1) {
                         // System.out.println(getKey(i, j) + " is exploding");
-                        matrix[i][j]--; // will become -1, aka a '.'
+                        matrix[i][j] = -1; // will become -1, aka a '.'
 
                         if (i + 1 < numOfRows && matrix[i + 1][j] > 1) {
                             // System.out.println(getKey(i + 1, j) + " (S) becomes .");
@@ -83,6 +78,9 @@ class Result {
                             // System.out.println(getKey(i, j - 1) + " (W) becomes .");
                             matrix[i][j - 1] = -1;
                         }
+                    } else if (matrix[i][j] > 1) {
+                        // Decrease the time for bombs
+                        matrix[i][j]--;
                     }
                 }
             }

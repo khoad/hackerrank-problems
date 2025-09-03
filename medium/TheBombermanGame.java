@@ -21,10 +21,26 @@ class Result {
      *  2. STRING_ARRAY grid
      */
 
-    public static List<String> bomberMan(int n, List<String> grid) {
+    public static List<String> bomberManMine(int n, List<String> grid) {
         // Write your code here
         int numOfRows = grid.size();
         int numOfColumns = grid.get(0).length();
+
+        if (n == 1) {
+            return grid;
+        }
+
+        var result = new ArrayList<String>();
+        if (n % 2 == 0) {
+            for (int i = 0; i < numOfRows; i++) {
+                var sb = new StringBuilder();
+                for (int j = 0; j < numOfColumns; j++) {
+                    sb.append('O');
+                }
+                result.add(sb.toString());
+            }
+            return result;
+        }
 
         // change into matrix
         // -1 == '.'
@@ -44,7 +60,10 @@ class Result {
 
         // main logic
         boolean plant = false;
-        for (int sec = 2; sec <= n; sec++) {
+        // Pattern repeats every 4 seconds:
+        //   if n % 4 == 1, it will look like at 5s
+        //   if n % 4 == 3, it will look like at 3s
+        for (int sec = 2; sec <= (n % 4 == 1 ? 5 : n % 4); sec++) {
             plant = !plant;
 
             for (int i = 0; i < numOfRows; i++) {
@@ -56,26 +75,21 @@ class Result {
                     }
 
                     if (matrix[i][j] == 1) {
-                        // System.out.println(getKey(i, j) + " is exploding");
                         matrix[i][j] = -1; // will become -1, aka a '.'
 
                         if (i + 1 < numOfRows && matrix[i + 1][j] > 1) {
-                            // System.out.println(getKey(i + 1, j) + " (S) becomes .");
                             matrix[i + 1][j] = -1; // becomes a '.', no explosion
                         }
 
                         if (i - 1 >= 0 && matrix[i - 1][j] > 1) {
-                            // System.out.println(getKey(i - 1, j) + " (N) becomes .");
                             matrix[i - 1][j] = -1;
                         }
 
                         if (j + 1 < numOfColumns && matrix[i][j + 1] > 1) {
-                            // System.out.println(getKey(i, j + 1) + " (E) becomes .");
                             matrix[i][j + 1] = -1;
                         }
 
                         if (j - 1 >= 0 && matrix[i][j - 1] > 1) {
-                            // System.out.println(getKey(i, j - 1) + " (W) becomes .");
                             matrix[i][j - 1] = -1;
                         }
                     } else if (matrix[i][j] > 1) {
@@ -88,22 +102,94 @@ class Result {
         return matrixToGrid(matrix);
     }
 
-    public static String getKey(int i, int j) {
-        return i + "," + j;
-    }
-
     public static List<String> matrixToGrid(int[][] matrix) {
         var list = new ArrayList<String>();
         for (int i = 0; i < matrix.length; i++) {
             var sb = new StringBuilder();
             for (int j = 0; j < matrix[0].length; j++) {
                 sb.append(matrix[i][j] <= 0 ? '.' : 'O');
-                // System.out.print(matrix[i][j]);
             }
             list.add(sb.toString());
-            // System.out.println();
         }
         return list;
+    }
+
+    public static List<String> bomberMan(int n, List<String> grid) {
+        int r = grid.size();
+        int c = grid.get(0).length();
+
+        // If n is 1, return the original grid
+        if (n == 1) {
+            return grid;
+        }
+
+        // If n is even, the grid will be completely filled with bombs
+        if (n % 2 == 0) {
+            List<String> result = new ArrayList<>();
+            for (int i = 0; i < r; i++) {
+                StringBuilder row = new StringBuilder();
+                for (int j = 0; j < c; j++) {
+                    row.append('O');
+                }
+                result.add(row.toString());
+            }
+            return result;
+        }
+
+        // For odd n, we need to simulate the explosions
+        // The pattern repeats every 4 seconds after the first explosion
+        int effectiveN = n % 4;
+
+        // Convert grid to 2D char array for easier manipulation
+        char[][] gridArray = new char[r][c];
+        for (int i = 0; i < r; i++) {
+            gridArray[i] = grid.get(i).toCharArray();
+        }
+
+        // Possible values are 3 or 1 (0 or 2 are covered in the n % 2 == 0 case)
+        if (effectiveN == 3) {
+            // First explosion happens
+            gridArray = explode(gridArray, r, c);
+        } else if (effectiveN == 1) {
+            // Second explosion happens
+            gridArray = explode(gridArray, r, c);
+            gridArray = explode(gridArray, r, c);
+        }
+
+        // Convert back to List<String>
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < r; i++) {
+            result.add(new String(gridArray[i]));
+        }
+
+        return result;
+    }
+
+    private static char[][] explode(char[][] grid, int r, int c) {
+        char[][] newGrid = new char[r][c];
+
+        // Initialize new grid with bombs
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                newGrid[i][j] = 'O';
+            }
+        }
+
+        // Explode existing bombs
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                if (grid[i][j] == 'O') {
+                    // Clear the bomb and adjacent cells
+                    newGrid[i][j] = '.';
+                    if (i > 0) newGrid[i-1][j] = '.';
+                    if (i < r-1) newGrid[i+1][j] = '.';
+                    if (j > 0) newGrid[i][j-1] = '.';
+                    if (j < c-1) newGrid[i][j+1] = '.';
+                }
+            }
+        }
+
+        return newGrid;
     }
 
 }

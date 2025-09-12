@@ -1,0 +1,27 @@
+{
+  "name": "interview-simpledb-typescript",
+  "version": "1.0.0",
+  "description": "Interview SimpleDB implementation",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha",
+    "test:watch": "mocha --watch-extensions ts --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hashicorp/interview-simpledb-typescript.git"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/hashicorp/interview-simpledb-typescript/issues"
+  },
+  "homepage": "https://github.com/hashicorp/interview-simpledb-typescript#readme",
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.11",
+    "mocha": "^6.2.2",
+    "ts-node": "^8.5.2",
+    "typescript": "3.7.2"
+  }
+}

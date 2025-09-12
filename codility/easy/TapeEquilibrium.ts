@@ -1,6 +1,8 @@
 // you can write to stdout for debugging purposes, e.g.
 // console.log('this is a debug message');
 
+import assert from "assert"
+
 function tapeEquilibrium(A: number[]): number {
     // Implement your solution here
     let left = 0
@@ -14,10 +16,9 @@ function tapeEquilibrium(A: number[]): number {
         left += A[i]
         right -= A[i]
         let diff = Math.abs(left - right)
-        console.log(diff)
         minDiff = Math.min(minDiff, diff)
     }
     return minDiff
 }
 
-console.log(tapeEquilibrium([-1000, 1000]))
+assert.equal(tapeEquilibrium([-1000, 1000]), 2000)

@@ -12,66 +12,53 @@ export interface SimpleDBInterface {
   commit(): void | Error;
 }
 
-let store = new Map()
-let tempStore = new Map<string, (number | null)[]>()
-let transaction = false
-let tempKeys: string[] = []
-
 export class SimpleDB implements SimpleDBInterface {
+  private store: Map<string, any> = new Map()
+  private tranStack: Map<string, any>[] = []
 
   get(key: string): Number | null {
-    if (!transaction) {
-      return store.get(key)
+    for (let i = this.tranStack.length - 1; i >= 0; i--) {
+      const transaction = this.tranStack[i]
+      if (transaction.has(key)) {
+        return transaction.get(key)
+      }
     }
-    let array = tempStore.get(key) || []
-    return array.length ? array[array.length - 1] : store.get(key)
+    return this.store.get(key)
   }
 
   set(key: string, value: any) {
-    if (!transaction) {
-      store.set(key, value)
+    if (this.tranStack.length == 0) {
+      this.store.set(key, value)
       return
     }
-    let array = tempStore.get(key) ?? []
-    array.push(value)
-    tempStore.set(key, array)
-    tempKeys.push(key)
+    const transaction = this.tranStack[this.tranStack.length - 1]
+    transaction.set(key, value)
   }
 
   unset(key: string) {
-    if (!transaction) {
-      store.delete(key)
-      return
-    }
     this.set(key, null)
   }
 
   begin() {
-    transaction = true
+    this.tranStack.push(new Map())
   }
 
   rollback(): void | Error {
-    if (tempKeys.length == 0) {
-      throw new Error()
+    if (this.tranStack.length == 0) {
+      throw new Error('Cannot rollback')
     }
-    let key = tempKeys.pop()!
-    let array = tempStore.get(key)!
-    if (array.length == 0) {
-      throw new Error()
-    }
-    array.pop()
-    tempStore.set(key, array!)
+    this.tranStack.pop()
   }
 
   commit(): void | Error {
-    if (!transaction) {
-      throw new Error()
+    if (this.tranStack.length == 0) {
+      throw new Error('Cannot commit')
     }
-    transaction = false
-    tempKeys = []
-    for (const [key, array] of tempStore) {
-      store.set(key, array.pop())
+    for (const transaction of this.tranStack) {
+      for (const [key, value] of transaction) {
+        this.store.set(key, value)
+      }
     }
-    tempStore.clear()
+    this.tranStack = []
   }
 }

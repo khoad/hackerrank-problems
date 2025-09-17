@@ -5,7 +5,7 @@ import assert from "assert"
 
 function brackets(S: string): number {
     // Implement your solution here
-    let stack = []
+    let stack:string[] = []
     let map = new Map([
         ['}', '{'],
         [')', '('],
@@ -16,6 +16,8 @@ function brackets(S: string): number {
             stack.push(c)
         } else if (map.get(c) == stack[stack.length - 1]) {
             stack.pop()
+        } else {
+            return 0
         }
     }
     return stack.length == 0 ? 1 : 0
@@ -24,5 +26,11 @@ function brackets(S: string): number {
 
 assert.equal(brackets('{[()()]}'), 1)
 assert.equal(brackets('([)()]'), 0)
+assert.equal(brackets(''), 1)  // Empty string should be valid
+assert.equal(brackets('('), 0)  // Only opening bracket
+assert.equal(brackets(')'), 0)  // Only closing bracket
+assert.equal(brackets('([)]'), 0)  // Mismatched brackets
+assert.equal(brackets('((()))'), 1)  // Nested valid brackets
+assert.equal(brackets('([{}])'), 1)  // Mixed valid brackets
 
 console.log("All tests passed!");

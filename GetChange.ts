@@ -1,47 +1,22 @@
-import assert from "assert"
-
 // Implement a change returning algorithm for a vending machine
 // M is the money put in
 // P is the cost of the item
 function getChange(M: number, P: number): number[] {
-    let result:number[] = []
-    let changeTotal = M - P
-    let dollar: number
-    [dollar, changeTotal] = changeFor(changeTotal, 1)
-    result.unshift(dollar)
-    // console.log('$1', dollar, changeTotal)
+    let remaining = M - P
+    const result:number[] = []
 
-    let fifty: number
-    [fifty, changeTotal] = changeFor(changeTotal, 0.5)
-    result.unshift(fifty)
-    // console.log('50c', fifty, changeTotal)
-
-    let twentyFive: number
-    [twentyFive, changeTotal] = changeFor(changeTotal, 0.25)
-    result.unshift(twentyFive)
-    // console.log('25c', twentyFive, changeTotal)
-
-    let ten: number
-    [ten, changeTotal] = changeFor(changeTotal, 0.1)
-    result.unshift(ten)
-    // console.log('10c', ten, changeTotal)
-
-    let five: number
-    [five, changeTotal] = changeFor(changeTotal, 0.05)
-    result.unshift(five)
-    // console.log('5c', five, changeTotal)
-
-    let one = Number((changeTotal * 100).toFixed(0))
-    result.unshift(one)
-    // console.log('1c', one, changeTotal)
+    for (let coinValue of [1, 0.5, 0.25, 0.1, 0.05, 0.01]) {
+        let coinChange: number
+        [coinChange, remaining] = changeFor(remaining, coinValue)
+        result.unshift(coinChange)
+    }
 
     return result
-    // return [one, five, ten, twentyFive, fifty, dollar]
 }
 
-function changeFor(changeTotal: number, coin: number): [number, number] {
-    let coins = Math.floor(changeTotal / coin)
-    changeTotal %= coin
+function changeFor(changeTotal: number, coinValue: number): [number, number] {
+    let coins = Math.floor(changeTotal / coinValue)
+    changeTotal %= coinValue
     changeTotal = Number(changeTotal.toFixed(2))
     return [coins, changeTotal]
 }

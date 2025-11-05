@@ -1,0 +1,225 @@
+Given the problem below
+Write a function to solve it
+
+/*
+ * Complete the 'maximumXorSum' function below.
+ *
+ * The function is expected to return an INTEGER.
+ * The function accepts following parameters:
+ *  1. INTEGER_ARRAY arr1
+ *  2. INTEGER_ARRAY arr2
+ */
+
+// Input: [1,2,3], [10,10,10], Expected output: 84
+// Input: [3,1,2,6], [2,8,4,9], Expected output: 116
+// Input: [1,6,14,21,19], [3,7,24,12,24], Expected output: 395
+function maximumXorSum(arr1: number[], arr2: number[]): number {
+    const MOD = 1000000007;
+    const n = arr1.length;
+    
+    // Count how many elements in arr2 have each bit set
+    const bitCounts = new Array(32).fill(0);
+    for (const num of arr2) {
+        for (let bit = 0; bit < 32; bit++) {
+            if (num & (1 << bit)) bitCounts[bit]++;
+        }
+    }
+    
+    let totalSum = 0;
+    
+    // For each arr1[i], compute sum of XORs with all arr2 elements using bit manipulation
+    for (const num of arr1) {
+        let rowSum = 0;
+        
+        for (let bit = 0; bit < 32; bit++) {
+            const bitValue = 1 << bit;
+            const hasBit = (num & bitValue) !== 0;
+            
+            // XOR has this bit set when arr1[i] and arr2[j] have different bits
+            // If arr1[i] has bit: count = n - bitCounts[bit] (arr2[j] doesn't have it)
+            // If arr1[i] doesn't have bit: count = bitCounts[bit] (arr2[j] has it)
+            const count = hasBit ? n - bitCounts[bit] : bitCounts[bit];
+            
+            // Add contribution: count * 2^bit mod MOD
+            rowSum = (rowSum + Number((BigInt(count) * BigInt(bitValue)) % BigInt(MOD))) % MOD;
+        }
+        
+        totalSum = (totalSum + rowSum) % MOD;
+    }
+    
+    return totalSum;
+}
+
+Problem:
+
+<div class="ps-content-wrapper-v0">
+    <p>Given two arrays&nbsp;<em>arr1&nbsp;</em>and&nbsp;<em>arr2&nbsp;</em>of the same length&nbsp;<em>n,&nbsp;</em>a matrix&nbsp;<em>mat&nbsp;</em>with&nbsp;<em>n&nbsp;</em>rows and&nbsp;<em>n&nbsp;</em>columns is derived&nbsp;from them&nbsp;as follows.</p>
+    
+    <ul>
+        <li>
+    <em>mat[i][j]<sub>&nbsp;</sub>= (arr1[i]&nbsp;⊕ arr2[j]</em>) for all <em>1 ≤&nbsp;i, j ≤&nbsp;n</em>, where ⊕ is the bitwise XOR operation.</li>
+    </ul>
+    
+    <p>&nbsp;</p>
+    
+    <p>Find the sum of elements of the derived&nbsp;matrix&nbsp;<em>mat</em>. Since the sum can be large, compute it modulo&nbsp;(10<sup>9&nbsp;</sup>+ 7)<em>.&nbsp;</em></p>
+    
+    <p>&nbsp;</p>
+    
+    <p>&nbsp;</p>
+    
+    <p><strong>Note:</strong> 1-based indexing is used.</p>
+    &nbsp;
+    
+    <p aria-level="4" data-a11y="p-str" role="heading"><strong>Example </strong></p>
+    
+    <p><em>n = </em>4</p>
+    
+    <p><em>arr1 = </em>[1, 2, 3, 4]</p>
+    
+    <p><em>arr2 = </em>[1, 2, 3, 4]</p>
+    
+    <p>&nbsp;</p>
+    
+    <p>This is the derived matrix pre-computation.</p>
+    
+    <p>&nbsp;</p>
+    
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow><mo>[</mo> <mtable> <mtr> <mtd><mn>1 ⊕ 1</mn></mtd> <mtd><mn>1 ⊕ 2</mn></mtd> <mtd><mn>1 ⊕ 3</mn></mtd> <mtd><mn>1 ⊕ 4</mn></mtd> </mtr> <mtr> <mtd><mn>2 ⊕ 1</mn></mtd> <mtd><mn>2 ⊕ 2</mn></mtd> <mtd><mn>2 ⊕ 3</mn></mtd> <mtd><mn>2 ⊕ 4</mn></mtd> </mtr> <mtr> <mtd><mn>3 ⊕ 1</mn></mtd> <mtd><mn>3 ⊕ 2</mn></mtd> <mtd><mn>3 ⊕ 3</mn></mtd> <mtd><mn>3 ⊕ 4</mn></mtd> </mtr> <mtr> <mtd><mn>4 ⊕ 1</mn></mtd> <mtd><mn>4 ⊕ 2</mn></mtd> <mtd><mn>4 ⊕ 3</mn></mtd> <mtd><mn>4 ⊕ 4</mn></mtd> </mtr> </mtable> <mo>]</mo></mrow></math></p>
+    
+    <p>&nbsp;</p>
+    
+    <p>The computed matrix:</p>
+    
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow><mo>[</mo> <mtable> <mtr> <mtd><mn>0</mn></mtd> <mtd><mn>3</mn></mtd> <mtd><mn>2</mn></mtd> <mtd><mn>5</mn></mtd> </mtr> <mtr> <mtd><mn>3</mn></mtd> <mtd><mn>0</mn></mtd> <mtd><mn>1</mn></mtd> <mtd><mn>6</mn></mtd> </mtr> <mtr> <mtd><mn>2</mn></mtd> <mtd><mn>1</mn></mtd> <mtd><mn>0</mn></mtd> <mtd><mn>7</mn></mtd> </mtr> <mtr> <mtd><mn>5</mn></mtd> <mtd><mn>6</mn></mtd> <mtd><mn>7</mn></mtd> <mtd><mn>0</mn></mtd> </mtr> </mtable> <mo>]</mo></mrow></math></p>
+    
+    <p>&nbsp;</p>
+    
+    <p>The sum of elements of the matrix <em>mat</em> is (0 + 3 + 2 + 5 + 3 + 0 + 1 + 6 + 2 + 1 + 0 + 7 + 5 + 6 + 7 + 0) = 48 and 48 mod (10<sup>9&nbsp;</sup>+ 7) = 48.</p>
+    
+    <p>Return 48.</p>
+    
+    <p>&nbsp;</p>
+    
+    <p aria-level="4" class="section-title" data-a11y="p-s-t" role="heading">Function Description</p>
+    
+    <p>Complete the function <em>getMaximumXorSum</em> in the editor with<span style="white-space:initial;">&nbsp;the following parameters:</span></p>
+    
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;<em>int arr1[n]:</em>&nbsp;the first array</p>
+    
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;<em>int arr2[n]:</em>&nbsp;the second array</p>
+    
+    <p>&nbsp;</p>
+    
+    <p aria-level="4" data-a11y="p-str" role="heading"><strong>Return</strong></p>
+    
+    <p>&nbsp;&nbsp;&nbsp;&nbsp;<em>int: </em>the sum of the elements of the derived matrix modulo (10<sup>9 </sup>+ 7)</p>
+    
+    <p>&nbsp;</p>
+    
+    <p aria-level="4" class="section-title" data-a11y="p-s-t" role="heading">Constraints</p>
+    
+    <ul>
+        <li>1&nbsp;<em>≤ n ≤&nbsp;</em>10<sup>5</sup>
+    </li>
+        <li>1&nbsp;<em>≤ arr1[i]&nbsp;≤&nbsp;</em>10<sup>9</sup>
+    </li>
+        <li>1&nbsp;<em>≤ arr2[i]&nbsp;≤&nbsp;</em>10<sup>9</sup>
+    </li>
+        <li><em>len(arr1) = len(arr2) = n</em></li>
+    </ul>
+    
+    <p>&nbsp;</p>
+    <!-- <StartOfInputFormat> DO NOT REMOVE THIS LINE-->
+    
+    <details><summary class="section-title" data-a11y="d-s"><span aria-level="4" data-a11y="d-s-t" role="heading">Input Format For Custom Testing</span></summary>
+    
+    <p>The first line contains an integer, <em>n,</em> the number of elements in array <em>arr1</em>.</p>
+    
+    <p>Each line <em>i</em> of the next <em>n</em> subsequent lines (where <em>0 ≤ i &lt; n</em>) contains an integer that describes <em>arr1[i]</em>.</p>
+    
+    <p>The next line contains an integer, <em>n</em>, the number of elements in array <em>arr2</em>.</p>
+    
+    <p>Each line <em>i</em> of the next <em>n</em> subsequent lines (where <em>0 ≤ i &lt; n</em>) contains an integer that describes <em>arr2[i]</em>.</p>
+    </details>
+    <!-- </StartOfInputFormat> DO NOT REMOVE THIS LINE-->
+    
+    <details open="open"><summary class="section-title" data-a11y="d-s"><span aria-level="4" data-a11y="d-s-t" role="heading">Sample Case 0</span></summary>
+    
+    <div class="collapsable-details">
+    <p aria-level="5" class="section-title" data-a11y="d-p-s-t" role="heading">Sample Input For Custom Testing</p>
+    
+    <pre>STDIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FUNCTION
+    -----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --------
+    3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr1[] size n = 3
+    1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr1 = [1, 2, 3]
+    2
+    3
+    3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr2[] size n = 3
+    10&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr2 = [10, 10, 10]
+    10
+    10</pre>
+    
+    <p aria-level="5" class="section-title" data-a11y="d-p-s-t" role="heading">Sample Output</p>
+    
+    <pre>84</pre>
+    
+    <p aria-level="5" class="section-title" data-a11y="d-p-s-t" role="heading">Explanation</p>
+    
+    <p>&nbsp;</p>
+    
+    <p>The derived matrix pre-computation:</p>
+    
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow> <mo>[</mo> <mtable> <mtr> <mtd><mn>1 ⊕ 10</mn></mtd> <mtd><mn>1 ⊕ 10</mn></mtd> <mtd><mn>1 ⊕ 10</mn></mtd> </mtr> <mtr> <mtd><mn>2 ⊕ 10</mn></mtd> <mtd><mn>2 ⊕ 10</mn></mtd> <mtd><mn>2 ⊕ 10</mn></mtd> </mtr> <mtr> <mtd><mn>3 ⊕ 10</mn></mtd> <mtd><mn>3 ⊕ 10</mn></mtd> <mtd><mn>3 ⊕ 10</mn></mtd> </mtr> </mtable> <mo>]</mo></mrow></math></p>
+    
+    <p>&nbsp;</p>
+    
+    <p>The derived matrix:</p>
+    
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow> <mo>[</mo> <mtable> <mtr> <mtd><mn>11</mn></mtd> <mtd><mn>11</mn></mtd> <mtd><mn>11</mn></mtd> </mtr> <mtr> <mtd><mn>8</mn></mtd> <mtd><mn>8</mn></mtd> <mtd><mn>8</mn></mtd> </mtr> <mtr> <mtd><mn>9</mn></mtd> <mtd><mn>9</mn></mtd> <mtd><mn>9</mn></mtd> </mtr> </mtable> <mo>]</mo></mrow></math></p>
+    
+    <p>&nbsp;</p>
+    
+    <p>The sum of elements is (11 + 11 + 11 + 8 + 8 + 8 + 9 + 9 + 9) = 84</p>
+    </div>
+    </details>
+    
+    <details><summary class="section-title" data-a11y="d-s"><span aria-level="4" data-a11y="d-s-t" role="heading">Sample Case 1</span></summary>
+    
+    <div class="collapsable-details">
+    <p aria-level="5" class="section-title" data-a11y="d-p-s-t" role="heading">Sample Input For Custom Testing</p>
+    
+    <pre>STDIN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; FUNCTION
+    -----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; --------
+    4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr1[] size n = 4&nbsp;&nbsp;&nbsp;&nbsp;
+    3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr1 = [3, 1, 2, 6]
+    1
+    2
+    6
+    4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr2[] size n = 4
+    2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→&nbsp;&nbsp;&nbsp;&nbsp;arr2 = [2, 8, 4, 9]
+    8
+    4
+    9</pre>
+    
+    <p aria-level="5" class="section-title" data-a11y="d-p-s-t" role="heading">Sample Output</p>
+    
+    <pre>116</pre>
+    
+    <p aria-level="5" class="section-title" data-a11y="d-p-s-t" role="heading">Explanation</p>
+    
+    <p>pre-computation</p>
+    
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow> <mo>[</mo> <mtable> <mtr> <mtd><mn>3 ⊕ 2</mn></mtd> <mtd><mn>3 ⊕ 8</mn></mtd> <mtd><mn>3 ⊕ 4</mn></mtd> <mtd><mn>3 ⊕ 9</mn></mtd> </mtr> <mtr> <mtd><mn>1 ⊕ 2</mn></mtd> <mtd><mn>1 ⊕ 8</mn></mtd> <mtd><mn>1 ⊕ 4</mn></mtd> <mtd><mn>1 ⊕ 9</mn></mtd> </mtr> <mtr> <mtd><mn>2 ⊕ 2</mn></mtd> <mtd><mn>2 ⊕ 8</mn></mtd> <mtd><mn>2 ⊕ 4</mn></mtd> <mtd><mn>2 ⊕ 9</mn></mtd> </mtr> <mtr> <mtd><mn>6 ⊕ 2</mn></mtd> <mtd><mn>6 ⊕ 8</mn></mtd> <mtd><mn>6 ⊕ 4</mn></mtd> <mtd><mn>6 ⊕ 9</mn></mtd> </mtr> </mtable> <mo>]</mo></mrow></math></p>
+    
+    <p>&nbsp;</p>
+    computed matrix
+    
+    <p><math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow> <mo>[</mo> <mtable> <mtr> <mtd><mi> 1</mi></mtd> <mtd><mi>11</mi></mtd> <mtd><mi> 7</mi></mtd> <mtd><mi>10</mi></mtd> </mtr> <mtr> <mtd><mi> 3</mi></mtd> <mtd><mi> 9</mi></mtd> <mtd><mi> 5</mi></mtd> <mtd><mi> 8</mi></mtd> </mtr> <mtr> <mtd><mi> 0</mi></mtd> <mtd><mi>10</mi></mtd> <mtd><mi> 6</mi></mtd> <mtd><mi>11</mi></mtd> </mtr> <mtr> <mtd><mi> 4</mi></mtd> <mtd><mi>14</mi></mtd> <mtd><mi> 2</mi></mtd> <mtd><mi>15</mi></mtd> </mtr> </mtable> <mo>]</mo></mrow></math></p>
+    
+    <p>&nbsp;</p>
+    
+    <p>(1 + 11 + 7 + 10 + 3 + 9 + 5 + 8 + 0 + 10 + 6 + 11 + 4 + 14 + 2 + 15) = 116</p>
+    </div>
+    </details>
+    </div>
